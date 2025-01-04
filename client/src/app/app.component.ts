@@ -1,23 +1,30 @@
-import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import init, { greet } from '../../../lib/pkg';
+import { Component, inject } from '@angular/core';
+import { LibService } from './lib.service';
+import { FormsModule, NgModel } from '@angular/forms';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  imports: [FormsModule],
   template: `
-    <h1>Welcome to {{title}}!</h1>
+   <h1>{{greeting}}</h1>
+   <p>Type a name to generate a greeting using WASM</p>
+   <form>
+     <input type="text" [(ngModel)]="name" name="name" (keyup)="generateGreeting()"/>
+   </form>
 
-    <router-outlet />
+
   `,
   styles: [],
 })
 export class AppComponent {
-  title = 'app';
 
-  constructor() {
-    init().then(() => {
-      console.log(greet("Taylor"));
-    });
+  name: string = "";
+  greeting: string = "Hello, World!";
+
+  service = inject(LibService);
+
+  generateGreeting() {
+    this.greeting = this.service.greet(this.name);
   }
+
 }
